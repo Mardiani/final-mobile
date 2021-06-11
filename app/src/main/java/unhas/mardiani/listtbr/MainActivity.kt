@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,6 +31,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        loadNote()
+    }
+
+    fun loadNote() {
         CoroutineScope(Dispatchers.IO).launch {
             val notes = db.noteDao().getNotes()
             Log.d("MainActivity", "dbResponse: $notes")
@@ -58,6 +63,13 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(note: Note) {
                 intentEdit(note.id, Constant.TYPE_READ)
             }
+            override fun onUpdate(note: Note) {
+                intentEdit(note.id, Constant.TYPE_UPDATE)
+            }
+
+            override fun onDelete(note: Note) {
+                deleteDialog(note)
+            }
         })
         list_note.apply {
             layoutManager = LinearLayoutManager(applicationContext)
@@ -65,4 +77,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteDialog(note: Note) {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            setTitle("Konfirmasi")
+            setMessage("Apakah Anda yakin ingin menghapus '${note.title}'?")
+            setNegativeButton("Batal") { dialogInterface, i ->
+                dialogInterface.dismiss()
+            }
+            setPositiveButton("Hapus") { dialogInterface, i ->
+                dialogInterface.dismiss()
+                CoroutineScope(Dispatchers.IO).launch {
+                    db.noteDao().deleteNote(note)
+                    loadNote()
+                }
+            }
+        }
+        alertDialog.show()
+    }
 }

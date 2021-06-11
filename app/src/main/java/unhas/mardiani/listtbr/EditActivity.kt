@@ -25,6 +25,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun setupView() {
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val intentType = intent.getIntExtra("intent_type", 0)
         when (intentType) {
             Constant.TYPE_CREATE -> {
@@ -51,6 +52,14 @@ class EditActivity : AppCompatActivity() {
                 finish()
             }
         }
+        button_update.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                db.noteDao().updateNote(
+                        Note (noteId, edit_title.text.toString(), edit_writer.text.toString(), edit_note.text.toString())
+                )
+                finish()
+            }
+        }
     }
 
     private fun getNote() {
@@ -61,5 +70,10 @@ class EditActivity : AppCompatActivity() {
             edit_writer.setText( notes.writer )
             edit_note.setText( notes.note )
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

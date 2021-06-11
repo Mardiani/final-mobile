@@ -38,7 +38,7 @@
         android:layout_marginTop="4dp"
         android:gravity="top"
         android:hint="Tentang Buku"
-        android:minLines="3"
+        android:minLines="10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_writer" />

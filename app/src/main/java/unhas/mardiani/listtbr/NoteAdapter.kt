@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.adapter_note.view.*
 import unhas.mardiani.listtbr.room.Note
 
-class NoteAdapter(private val notes: ArrayList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter(private val notes: ArrayList<Note>, private val listener: OnAdapterListener)
+    : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         return NoteViewHolder(
@@ -20,6 +21,9 @@ class NoteAdapter(private val notes: ArrayList<Note>) : RecyclerView.Adapter<Not
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notes[position]
         holder.view.text_title.text = note.title
+        holder.view.text_title.setOnClickListener {
+            listener.onClick( note )
+        }
     }
 
     class NoteViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -30,4 +34,7 @@ class NoteAdapter(private val notes: ArrayList<Note>) : RecyclerView.Adapter<Not
         notifyDataSetChanged()
     }
 
+    interface OnAdapterListener {
+        fun onClick(note: Note)
+    }
 }
